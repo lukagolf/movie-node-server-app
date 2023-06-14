@@ -1,32 +1,48 @@
-import posts from "./reviews.js";
-let reviews = posts;
+import * as reviewsDao from './reviews-dao.js'
 
-const createReview = (req, res) => {
+// const createReview = async (req, res) => {
+//     const newReview = req.body;
+//     console.log(newReview);
+//     newReview.movieId = '';
+//     newReview.username = '';
+//     newReview.title = '';
+//     newReview.rating = 0;
+//     newReview.description = '';
+
+//     const insertedReview = await reviewsDao.createReview(newReview);
+//     res.json(insertedReview);
+// }
+const createReview = async (req, res) => {
     const newReview = req.body;
-    newReview._id = (new Date()).getTime() + '';
-    newReview.reviews = 0;
-    newReview.reviewed = false;
-    reviews.push(newReview);
-    res.json(newReview);
+    console.log(newReview);
+
+    // Ensure the required fields are provided
+    if (!newReview.movieId || !newReview.username || !newReview.title || !newReview.rating || !newReview.description) {
+        res.status(400).json({ message: 'Missing required fields.' });
+        return;
+    }
+
+    const insertedReview = await reviewsDao.createReview(newReview);
+    res.json(insertedReview);
 }
 
-const findReviews = (req, res) => {
+
+const findReviews = async (req, res) => {
+    const reviews = await reviewsDao.findReviews();
     res.json(reviews);
 }
 
-const updateReview = (req, res) => {
-    const reviewId = req.params.rid;
+const updateReview = async (req, res) => {
+    const reviewIdToUpdate = req.params.rid;
     const updates = req.body;
-    const reviewIndex = reviews.findIndex((r) => r._id === reviewId)
-    reviews[reviewIndex] = {...reviews[reviewIndex], ...updates};
-    res.sendStatus(200);
+    const status = await reviewsDao.updateReview(reviewIdToUpdate, updates);
+    res.json(status);
 }
 
-const deleteReview = (req, res) => {
+const deleteReview = async (req, res) => {
     const reviewIdToDelete = req.params.rid;
-    reviews = reviews.filter((r) =>
-        r._id !== reviewIdToDelete);
-    res.sendStatus(200);
+    const status = await reviewsDao.deleteReview(reviewIdToDelete);
+    res.json(status);
 }
 
 export default (app) => {
