@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import HelloController from "./controllers/hello-controller.js";
-import UserController from "./users/users-controller.js";
+import UserController from "./controllers/users/users-controller.js";
 import ReviewsController from "./controllers/reviews/reviews-controller.js";
 import session from "express-session";
-import AuthController from "./users/auth-controller.js";
+import AuthController from "./controllers/users/auth-controller.js";
 import mongoose from "mongoose";
+import SavedMoviesController from './controllers/saved-movies/saved-movies-controller.js';
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'mongodb://127.0.0.1:27017/movie';
 mongoose.connect(CONNECTION_STRING);
@@ -26,7 +26,7 @@ app.use(
 );
 app.use(express.json());
 ReviewsController(app);
-HelloController(app)
 UserController(app)
 AuthController(app);
+SavedMoviesController(app);
 app.listen(process.env.PORT || 4000);
