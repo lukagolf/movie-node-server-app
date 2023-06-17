@@ -8,6 +8,7 @@ import AuthController from "./users/auth-controller.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import { config as dotenvConfig } from 'dotenv';
+import SavedMoviesController from './controllers/saved-movies/saved-movies-controller.js';
 
 dotenvConfig();
 
@@ -36,7 +37,7 @@ app.use(
         },
         store: MongoStore.create({
             mongoUrl: CONNECTION_STRING,
-            ttl: 14 * 24 * 60 * 60 // = 14 days. Default 
+            ttl: 14 * 24 * 60 * 60 // = 14 days. Default
         })
     })
 );
@@ -56,4 +57,5 @@ ReviewsController(app);
 HelloController(app)
 UserController(app)
 AuthController(app);
+SavedMoviesController(app);
 app.listen(process.env.PORT || 4000);
