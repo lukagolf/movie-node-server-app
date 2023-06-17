@@ -1,8 +1,8 @@
 import * as usersDao from "./users-dao.js";
 
 const UserController = (app) => {
-    app.get('/api/users', findAllUsers)
-    app.get('/api/users/:id', findUserById);
+    app.get('/api/users', findAllUsers);
+    app.get('/api/users/:idOrUsername', findUserByIdOrUsername); 
     app.post('/api/users', createUser);
     app.delete('/api/users/:id', deleteUser);
     app.put('/api/users/:id', updateUser);
@@ -53,6 +53,23 @@ const findAllUsers = async (req, res) => {
     } else {
         const users = await usersDao.findAllUsers();
         res.json(users);
+    }
+};
+
+const findUserByIdOrUsername = async (req, res) => {
+    const idOrUsername = req.params.idOrUsername;
+    let user;
+    
+    if(isNaN(idOrUsername)) {
+        user = await usersDao.findUserByUsername(idOrUsername);
+    } else {
+        user = await usersDao.findUserById(idOrUsername);
+    }
+
+    if (user) {
+        res.json(user);
+    } else {
+        res.sendStatus(404);
     }
 };
 
