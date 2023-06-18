@@ -32,6 +32,12 @@ const findReviews = async (req, res) => {
     res.json(reviews);
 }
 
+const findCriticReviews = async (req, res) => {
+    const criticUsername = req.params.username;
+    const reviews = await reviewsDao.findCriticReviews(criticUsername);
+    res.json(reviews);
+}
+
 const updateReview = async (req, res) => {
     const reviewIdToUpdate = req.params.rid;
     const updates = req.body;
@@ -48,6 +54,7 @@ const deleteReview = async (req, res) => {
 export default (app) => {
     app.post('/api/reviews', createReview);
     app.get('/api/reviews', findReviews);
+    app.get('/api/reviews/findCriticReviews/:username', findCriticReviews);
     app.put('/api/reviews/:rid', updateReview);
     app.delete('/api/reviews/:rid', deleteReview);
 }
