@@ -38,6 +38,12 @@ const findCriticReviews = async (req, res) => {
     res.json(reviews);
 }
 
+const findMovieReviews = async (req, res) => {
+    const mid = req.params.movieId;
+    const reviews = await reviewsDao.findMovieReviews(mid);
+    res.json(reviews);
+}
+
 const updateReview = async (req, res) => {
     const reviewIdToUpdate = req.params.rid;
     const updates = req.body;
@@ -55,6 +61,7 @@ export default (app) => {
     app.post('/api/reviews', createReview);
     app.get('/api/reviews', findReviews);
     app.get('/api/reviews/findCriticReviews/:username', findCriticReviews);
+    app.get('/api/reviews/findMovieReviews/:movieId', findMovieReviews);
     app.put('/api/reviews/:rid', updateReview);
     app.delete('/api/reviews/:rid', deleteReview);
 }
