@@ -41,16 +41,6 @@ app.use(
     })
 );
 
-app.use((req, res, next) => {
-    console.log('Session ID:', req.sessionID);
-    next();
-});
-
-app.use((req, res, next) => {
-    console.log('Session data:', req.session);
-    next();
-});
-
 app.use(express.json());
 ReviewsController(app);
 UserController(app)
