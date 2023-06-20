@@ -3,7 +3,6 @@ import * as savedMoviesDao from './saved-movies-dao.js';
 const createSavedMovie = async (req, res) => {
     const userAndMovie = req.body;
     console.log(req.body);
-    // const insertedMovie = await savedMoviesDao.createSavedMovie(movie);
     const movies = await savedMoviesDao.findSavedMovies(userAndMovie.userId);
 
     if (!movies.find((savedMovie) => savedMovie.userId === userAndMovie.userId && savedMovie.id === userAndMovie.id)) {
@@ -15,8 +14,8 @@ const createSavedMovie = async (req, res) => {
 }
 
 const deleteSavedMovie = async (req, res) => {
-    const mid = req.params.mid;
-    const status = await savedMoviesDao.deleteSavedMovie(mid);
+    const userAndMovie = req.body;
+    const status = await savedMoviesDao.deleteSavedMovie(userAndMovie);
     res.json(status);
 }
 
@@ -36,7 +35,7 @@ const findAllSavedMovies = async (req, res) => {
 
 export default (app)=> {
     app.post('/api/saved-movies', createSavedMovie);
-    app.delete('/api/saved-movies/:mid', deleteSavedMovie);
+    app.delete('/api/saved-movies', deleteSavedMovie);
     app.get('/api/saved-movies/:uid', findAllSavedMovies);
     // app.get('/api/saved-movies/:mid', findSavedMovieById);
 }

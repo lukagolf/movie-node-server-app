@@ -5,6 +5,7 @@ const usersSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: String,
+    followedCritics: Array,
     role: { type: String, enum: ["ADMIN", "CRITIC", "VIEWER"], default: "VIEWER" },
 }, { collection: "users" });
 export default usersSchema;
