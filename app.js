@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import HelloController from "./controllers/hello-controller.js";
 import UserController from "./users/users-controller.js";
 import ReviewsController from "./controllers/reviews/reviews-controller.js";
 import session from "express-session";
@@ -54,7 +53,6 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 ReviewsController(app);
-HelloController(app)
 UserController(app)
 AuthController(app);
 SavedMoviesController(app);
