@@ -7,7 +7,6 @@ import AuthController from "./users/auth-controller.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import { config as dotenvConfig } from 'dotenv';
-import SavedMoviesController from './controllers/saved-movies/saved-movies-controller.js';
 
 dotenvConfig();
 
@@ -45,5 +44,4 @@ app.use(express.json());
 ReviewsController(app);
 UserController(app)
 AuthController(app);
-SavedMoviesController(app);
 app.listen(process.env.PORT || 4000);

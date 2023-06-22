@@ -14,7 +14,6 @@ import * as reviewsDao from './reviews-dao.js'
 // }
 const createReview = async (req, res) => {
     const newReview = req.body;
-    console.log(newReview);
 
     // Ensure the required fields are provided
     if (!newReview.movieId || !newReview.username || !newReview.title || !newReview.rating || !newReview.description) {
