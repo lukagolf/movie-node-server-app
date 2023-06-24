@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import UserController from "./users/users-controller.js";
+import UserController from "./controllers/users/users-controller.js";
 import ReviewsController from "./controllers/reviews/reviews-controller.js";
 import session from "express-session";
-import AuthController from "./users/auth-controller.js";
+import AuthController from "./controllers/users/auth-controller.js";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import { config as dotenvConfig } from 'dotenv';
