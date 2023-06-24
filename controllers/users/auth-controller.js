@@ -45,13 +45,9 @@ const AuthController = (app) => {
         res.sendStatus(200);
     };
 
-    const update = (req, res) => { };
-
-
     app.post("/api/users/register", register);
     app.post("/api/users/login", login);
     app.post("/api/users/profile", profile);
     app.post("/api/users/logout", logout);
-    app.put("/api/users", update);
 };
 export default AuthController;

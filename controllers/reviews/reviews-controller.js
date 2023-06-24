@@ -1,17 +1,5 @@
 import * as reviewsDao from './reviews-dao.js'
 
-// const createReview = async (req, res) => {
-//     const newReview = req.body;
-//     console.log(newReview);
-//     newReview.movieId = '';
-//     newReview.username = '';
-//     newReview.title = '';
-//     newReview.rating = 0;
-//     newReview.description = '';
-
-//     const insertedReview = await reviewsDao.createReview(newReview);
-//     res.json(insertedReview);
-// }
 const createReview = async (req, res) => {
     const newReview = req.body;
 
