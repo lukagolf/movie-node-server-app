@@ -4,99 +4,114 @@
 -- It includes operations for adding, updating, and deleting users, retrieving
 -- user details, and ensuring data integrity.
 
+DROP PROCEDURE IF EXISTS add_user;
 DELIMITER //
-
--- Procedure: AddUser
+-- Procedure: add_user
 -- Description: Inserts a new user into the `users` table.
 -- Parameters:
 --   username (VARCHAR(64)): The username of the new user.
 --   pword (VARCHAR(64)): The password of the new user.
 --   email (VARCHAR(100)): The email of the new user.
+--   role1 (ENUM ('Admin', 'Viewer', 'Critic')): user's role on site (mandatory).
+--   role2 (ENUM ('Admin', 'Viewer', 'Critic')): secondary site role (optional).
 --   firstname (VARCHAR(64)): The first name of the new user.
 --   lastname (VARCHAR(64)): The last name of the new user.
-CREATE PROCEDURE AddUser(IN username VARCHAR(64), IN pword VARCHAR(64), IN email VARCHAR(100), IN firstname VARCHAR(64), IN lastname VARCHAR(64))
+CREATE PROCEDURE add_user(IN username VARCHAR(64), 
+						  IN pword VARCHAR(64), 
+                          IN email VARCHAR(100), 
+                          IN role1 ENUM ('Admin', 'Viewer', 'Critic'), 
+                          IN role2 ENUM ('Admin', 'Viewer', 'Critic'), 
+                          IN firstname VARCHAR(64), 
+                          IN lastname VARCHAR(64))
 BEGIN
-  INSERT INTO users (username, pword, email, firstname, lastname) VALUES (username, pword, email, firstname, lastname);
+  INSERT INTO users (username, pword, email, role1, role2, firstname, lastname) 
+			VALUES (username, pword, email, role1, role2, firstname, lastname);
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS update_user;
 DELIMITER //
-
--- Procedure: UpdateUser
+-- Procedure: update_user
 -- Description: Updates details of an existing user in the `users` table.
 -- Parameters:
---   userId (INT): The ID of the user to update.
---   newUsername (VARCHAR(64)): The new username of the user.
---   newPword (VARCHAR(64)): The new password of the user.
---   newEmail (VARCHAR(100)): The new email of the user.
---   newFirstname (VARCHAR(64)): The new first name of the user.
---   newLastname (VARCHAR(64)): The new last name of the user.
-CREATE PROCEDURE UpdateUser(IN userId INT, IN newUsername VARCHAR(64), IN newPword VARCHAR(64), IN newEmail VARCHAR(100), IN newFirstname VARCHAR(64), IN newLastname VARCHAR(64))
+--   user_id_p (INT): The ID of the user to update.
+--   new_username (VARCHAR(64)): The new username of the user.
+--   new_pword (VARCHAR(64)): The new password of the user.
+--   new_email (VARCHAR(100)): The new email of the user.
+--   new_role1 (ENUM ('Admin', 'Viewer', 'Critic')): user's role on site (mandatory)
+--   new_role2 (ENUM ('Admin', 'Viewer', 'Critic')): secondary site role (optional)
+--   new_firstname (VARCHAR(64)): The new first name of the user.
+--   new_lastname (VARCHAR(64)): The new last name of the user.
+CREATE PROCEDURE update_user(IN user_id_p INT, 
+							 IN new_username VARCHAR(64), 
+                             IN new_pword VARCHAR(64), 
+                             IN new_email VARCHAR(100), 
+                             IN new_role1  ENUM ('Admin', 'Viewer', 'Critic'), 
+                             IN new_role2  ENUM ('Admin', 'Viewer', 'Critic'), 
+                             IN new_firstname VARCHAR(64), 
+                             IN new_lastname VARCHAR(64))
 BEGIN
-  UPDATE users SET username = newUsername, pword = newPword, email = newEmail, firstname = newFirstname, lastname = newLastname WHERE user_id = userId;
+  UPDATE users SET username = new_username, 
+				   pword = new_pword, 
+                   email = new_email, 
+                   role1 = new_role1, 
+                   role2 = new_role2, 
+                   firstname = new_firstname, 
+                   lastname = new_lastname 
+                   WHERE user_id = user_id_p;
 END //
 DELIMITER ;
 
-DELIMITER //
-
--- Procedure: DeleteUser
+-- Procedure: delete_user
 -- Description: Deletes a user from the `users` table.
 -- Parameters:
---   userId (INT): The ID of the user to delete.
-CREATE PROCEDURE DeleteUser(IN userId INT)
+--   user_id_del (INT): The ID of the user to delete.
+DROP PROCEDURE IF EXISTS delete_user;
+DELIMITER //
+CREATE PROCEDURE delete_user(IN user_id_del INT)
 BEGIN
+  DELETE FROM user_likes_review WHERE user_id = user_id_del;
+  DELETE FROM user_dislikes_review WHERE user_id = user_id_del;
+  DELETE FROM user_favorites_movie WHERE user_id = user_id_del;
+  DELETE FROM user_follows_user WHERE follower_id = user_id_del OR
+									  followed_id = user_id_del;
   DELETE FROM users WHERE user_id = userId;
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS get_user;
 DELIMITER //
-
--- Function: GetUser
--- Description: Retrieves user details based on `user_id`, `username`, or `email`.
+-- Function: get_user
+-- Description: Retrieves user details based on `first_name`, 'last_name', `username`, or `email`.
 -- Parameters:
 --   searchTerm (VARCHAR(100)): The term used to search for the user.
 -- Returns: A table containing users that match the search term.
-CREATE FUNCTION GetUser(searchTerm VARCHAR(100))
-RETURNS TABLE
-RETURN SELECT * FROM users
-       WHERE user_id LIKE CONCAT('%', searchTerm, '%')
-          OR username LIKE CONCAT('%', searchTerm, '%')
-          OR email LIKE CONCAT('%', searchTerm, '%');
-DELIMITER ;
-
-DELIMITER //
-
--- Trigger: BeforeInsertUser
--- Description: Validates new user data before insertion. Ensures that the username and email are unique.
-CREATE TRIGGER BeforeInsertUser
-BEFORE INSERT ON users
-FOR EACH ROW
+CREATE PROCEDURE get_user(search_term VARCHAR(100))
 BEGIN
-  DECLARE existingUsernameCount INT;
-  DECLARE existingEmailCount INT;
-  SELECT COUNT(*) INTO existingUsernameCount FROM users WHERE username = NEW.username;
-  SELECT COUNT(*) INTO existingEmailCount FROM users WHERE email = NEW.email;
-  IF existingUsernameCount > 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate username detected';
-  END IF;
-  IF existingEmailCount > 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate email detected';
-  END IF;
+SELECT * FROM users
+   WHERE first_name LIKE CONCAT('%', search_term, '%')
+	  OR last_name LIKE CONCAT('%', search_term, '%')
+	  OR CONCAT(first_name, ' ', last_name) LIKE CONCAT('%', search_term, '%')
+	  OR username LIKE CONCAT('%', search_term, '%')
+	  OR email LIKE CONCAT('%', search_term, '%');
 END //
 DELIMITER ;
 
 DELIMITER //
 
--- Trigger: BeforeDeleteUser
--- Description: Handles cleanup before deleting a user. This can include
--- removing the user's related data in other tables.
--- Note: Specific cleanup actions will depend on the relational dependencies
--- and business logic.
-CREATE TRIGGER BeforeDeleteUser
-BEFORE DELETE ON users
-FOR EACH ROW
-BEGIN
-  -- Example cleanup action: DELETE FROM some_table WHERE user_id = OLD.user_id;
-  -- Add necessary cleanup queries based on your database schema and requirements.
-END //
-DELIMITER ;
+/* Changes:
+- Converted everything to snake case
+- deleted triggers for before insert and before delete
+- adjusted to have the two role enums
+- drop statements to facilitate updating file
+- got rid of delete movie trigger because it wouldn't delete
+movies that had existing reviews, but reviews are set to 
+CASCADE on delete
+- got rid of insert movie trigger because it only checked for
+  tMDB unqiueness, which MySQL enforces
+- updated user search funtion to search based on first / last name
+  instead of user id, as I believe this will be more useful to our
+  site's search feature
+- updated delete_movie to also delete movie data from all associated *:* tables
+- changed get_user to a procedure since it returns a table rather than a single value
+*/

@@ -4,79 +4,54 @@
 -- It includes operations for managing follower relationships and retrieving
 -- follower information.
 
+DROP PROCEDURE IF EXISTS follows_user;
 DELIMITER //
 
--- Procedure: FollowUser
+-- Procedure: follows_user
 -- Description: Adds a new follower relationship between two users.
 -- Parameters:
---   followerId (INT): The ID of the user who is following.
---   followedId (INT): The ID of the user who is being followed.
-CREATE PROCEDURE FollowUser(IN followerId INT, IN followedId INT)
+--   follower_id_p (INT): The ID of the user who is following.
+--   followed_id_p (INT): The ID of the user who is being followed.
+CREATE PROCEDURE follows_user(IN follower_id_p INT, IN followed_id_p INT)
 BEGIN
-  INSERT INTO user_follows_user (follower_id, followed_id) VALUES (followerId, followedId);
+  INSERT INTO user_follows_user (follower_id, followed_id) VALUES (follower_id_p, followed_id_p);
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS unfollow_user;
 DELIMITER //
 
--- Procedure: UnfollowUser
+-- Procedure: unfollow_user
 -- Description: Removes a follower relationship between two users.
 -- Parameters:
---   followerId (INT): The ID of the user who is unfollowing.
---   followedId (INT): The ID of the user who is being unfollowed.
-CREATE PROCEDURE UnfollowUser(IN followerId INT, IN followedId INT)
+--   follower_id_p (INT): The ID of the user who is unfollowing.
+--   followed_id_p (INT): The ID of the user who is being unfollowed.
+CREATE PROCEDURE unfollow_user(IN follower_id_p INT, IN followed_id_p INT)
 BEGIN
-  DELETE FROM user_follows_user WHERE follower_id = followerId AND followed_id = followedId;
+  DELETE FROM user_follows_user WHERE follower_id = follower_id_p AND followed_id = followed_id_p;
 END //
 DELIMITER ;
 
 DELIMITER //
 
--- Function: GetFollowers
+-- Function: get_followers
 -- Description: Retrieves a list of followers for a specific user.
 -- Parameters:
 --   userId (INT): The ID of the user whose followers are to be retrieved.
 -- Returns: A table containing the IDs of users who follow the specified user.
-CREATE FUNCTION GetFollowers(userId INT)
+CREATE FUNCTION get_followers(user_id INT)
 RETURNS TABLE
 RETURN SELECT follower_id FROM user_follows_user WHERE followed_id = userId;
 DELIMITER ;
 
 DELIMITER //
 
--- Function: GetFollowing
+-- Function: get_following
 -- Description: Retrieves a list of users that a specific user is following.
 -- Parameters:
---   userId (INT): The ID of the user whose followings are to be retrieved.
+--   user_id (INT): The ID of the user whose followings are to be retrieved.
 -- Returns: A table containing the IDs of users that the specified user is following.
-CREATE FUNCTION GetFollowing(userId INT)
+CREATE FUNCTION get_following(user_id INT)
 RETURNS TABLE
-RETURN SELECT followed_id FROM user_follows_user WHERE follower_id = userId;
+RETURN SELECT followed_id FROM user_follows_user WHERE follower_id = user_id;
 DELIMITER ;
-
-DELIMITER //
-
--- Trigger: AfterInsertFollow
--- Description: Performs actions after a new follow relationship is created. 
--- This can include updating follower counts or other related data.
-CREATE TRIGGER AfterInsertFollow
-AFTER INSERT ON user_follows_user
-FOR EACH ROW
-BEGIN
-  -- Example: Update follower count in a user stats table
-  -- UPDATE user_stats SET follower_count = follower_count + 1 WHERE user_id = NEW.followed_id;
-  -- Add necessary actions based on your database schema and requirements.
-END //
-DELIMITER ;
-
-DELIMITER //
-
--- Trigger: AfterDeleteFollow
--- Description: Performs actions after a follow relationship is removed.
--- This can include updating follower counts or other related data.
-CREATE TRIGGER AfterDeleteFollow
-AFTER DELETE ON user_follows_user
-FOR EACH ROW
-BEGIN
-  -- Example: Update follower count in a user stats table
-  -- UPDATE user_stats SET follower_count = follower_count - 1 WHERE user_id = OLD.followed_id;

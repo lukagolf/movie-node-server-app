@@ -4,90 +4,59 @@
 -- It includes operations for adding, updating, and deleting movies,
 -- retrieving movie details, and ensuring data integrity.
 
+DROP PROCEDURE IF EXISTS add_movie;
 DELIMITER //
-
--- Procedure: AddMovie
+-- Procedure: add_movie
 -- Description: Inserts a new movie into the `movies` table.
 -- Parameters:
 --   movieTitle (VARCHAR(1000)): The title of the movie.
 --   tmdbId (VARCHAR(255)): The TMDB (The Movie Database) ID of the movie.
-CREATE PROCEDURE AddMovie(IN movieTitle VARCHAR(1000), IN tmdbId VARCHAR(255))
+CREATE PROCEDURE add_movie(IN movie_title VARCHAR(1000), IN tmdbId VARCHAR(255))
 BEGIN
-  INSERT INTO movies (title, tmdb_id) VALUES (movieTitle, tmdbId);
+  INSERT INTO movies (title, tmdb_id) VALUES (movie_title, tmdbId);
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS update_movie;
 DELIMITER //
-
--- Procedure: UpdateMovie
+-- Procedure: update_movie
 -- Description: Updates details of an existing movie in the `movies` table.
 -- Parameters:
---   movieId (INT): The ID of the movie to update.
---   newTitle (VARCHAR(1000)): The new title of the movie.
+--   movie_id_p (INT): The ID of the movie to update.
+--   new_title_p (VARCHAR(1000)): The new title of the movie.
 --   newTmdbId (VARCHAR(255)): The new TMDB ID of the movie.
-CREATE PROCEDURE UpdateMovie(IN movieId INT, IN newTitle VARCHAR(1000), IN newTmdbId VARCHAR(255))
+CREATE PROCEDURE update_movie(IN movie_id_p INT, 
+							  IN new_title_p VARCHAR(1000), 
+                              IN newTmdbId VARCHAR(255))
 BEGIN
-  UPDATE movies SET title = newTitle, tmdb_id = newTmdbId WHERE movie_id = movieId;
+  UPDATE movies SET title = new_title_p, tmdb_id = newTmdbId WHERE movie_id = movie_id_p;
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS delete_movie;
 DELIMITER //
 
--- Procedure: DeleteMovie
+-- Procedure: delete_movie
 -- Description: Deletes a movie from the `movies` table.
 -- Parameters:
---   movieId (INT): The ID of the movie to delete.
-CREATE PROCEDURE DeleteMovie(IN movieId INT)
+--   movie_id_p (INT): The ID of the movie to delete.
+CREATE PROCEDURE delete_movie(IN movie_id_p INT)
 BEGIN
-  DELETE FROM movies WHERE movie_id = movieId;
+  DELETE FROM movie_has_genre WHERE movie_id = movie_id_p;
+  DELETE FROM user_favorites_movie WHERE movie_id = movie_id_p;
+  DELETE FROM movies WHERE movie_id = movie_id_p;
 END //
 DELIMITER ;
 
+DROP FUNCTION IF EXISTS get_movie;
 DELIMITER //
-
--- Function: GetMovie
--- Description: Retrieves movie details based on a search term that can match
--- either the title or TMDB ID.
+-- Function: get_movie
+-- Description: Retrieves movie details based on a search term that matches title
 -- Parameters:
---   searchTerm (VARCHAR(1000)): The term used to search for the movie.
+--   search_term (VARCHAR(1000)): The term used to search for the movie.
 -- Returns: A table containing movies that match the search term.
-CREATE FUNCTION GetMovie(searchTerm VARCHAR(1000))
+CREATE FUNCTION get_movie(search_term VARCHAR(1000))
 RETURNS TABLE
 RETURN SELECT * FROM movies
-       WHERE title LIKE CONCAT('%', searchTerm, '%')
-          OR tmdb_id LIKE CONCAT('%', searchTerm, '%');
-DELIMITER ;
-
-DELIMITER //
-
--- Trigger: BeforeInsertMovie
--- Description: Validates data before inserting a new movie. Ensures that the
--- TMDB ID is unique.
-CREATE TRIGGER BeforeInsertMovie
-BEFORE INSERT ON movies
-FOR EACH ROW
-BEGIN
-  DECLARE existingTmdbIdCount INT;
-  SELECT COUNT(*) INTO existingTmdbIdCount FROM movies WHERE tmdb_id = NEW.tmdb_id;
-  IF existingTmdbIdCount > 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate tmdb_id detected';
-  END IF;
-END //
-DELIMITER ;
-
-DELIMITER //
-
--- Trigger: BeforeDeleteMovie
--- Description: Checks for dependencies before deleting a movie. Ensures no
--- reviews are associated with the movie.
-CREATE TRIGGER BeforeDeleteMovie
-BEFORE DELETE ON movies
-FOR EACH ROW
-BEGIN
-  DECLARE reviewCount INT;
-  SELECT COUNT(*) INTO reviewCount FROM reviews WHERE movie_id = OLD.movie_id;
-  IF reviewCount > 0 THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete movie with existing reviews';
-  END IF;
-END //
+       WHERE title LIKE CONCAT('%', search_term, '%')
 DELIMITER ;
