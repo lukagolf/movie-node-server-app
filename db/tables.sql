@@ -33,7 +33,8 @@ CREATE TABLE users (
     role1 ENUM ('Admin', 'Viewer', 'Critic') NOT NULL,
     role2 ENUM ('Admin', 'Viewer', 'Critic'),
     firstname VARCHAR(64) NOT NULL,
-    lastname VARCHAR(64) NOT NULL
+    lastname VARCHAR(64) NOT NULL,
+    CONSTRAINT unique_roles CHECK (role1 != role2)
 );
 
 CREATE TABLE user_follows_user (
@@ -73,7 +74,7 @@ CREATE TABLE reviews (
 					      ON DELETE CASCADE,
 	CONSTRAINT FOREIGN KEY reviewer_fk (critic_id) REFERENCES
 	users (user_id) ON UPDATE RESTRICT
-					  ON DELETE CASCADE
+					ON DELETE CASCADE
 );
 
 CREATE TABLE user_likes_review (
