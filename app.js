@@ -7,14 +7,46 @@ import MoviesController from "./controllers/movies/movies-controller.js";
 import session from "express-session";
 import AuthController from "./controllers/users/auth-controller.js";
 import { config as dotenvConfig } from 'dotenv';
+import MySQLSession from 'express-mysql-session'
 
 dotenvConfig();
 const app = express();
+
+const MySQLStore = MySQLSession(session);
+
+const options = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'moviesite',
+    clearExpired: true,
+    checkExpirationInterval: 900000, // How frequently expired sessions will be cleared in ms.
+    expiration: 86400000, // Max age of valid session in ms.
+};
+
+const sessionStore = new MySQLStore(options);
+
 
 app.use(
     cors({
         credentials: true,
         origin: "http://localhost:3000",
+    })
+);
+
+app.use(
+    session({
+        secret: "any string",
+        resave: false,
+        saveUninitialized: true,
+        rolling: true,
+        cookie: {
+            sameSite: 'none', // the important part
+            secure: false, // the important part, changed for local testing
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        },
+        store: sessionStore
     })
 );
 

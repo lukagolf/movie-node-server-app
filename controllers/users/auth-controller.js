@@ -3,14 +3,14 @@ import * as usersDao from "./users-dao.js";
 const AuthController = (app) => {
     const register = async (req, res) => {
         console.log(req.body);
-        const user = await usersDao.findUserByUsername(req.body.username);
-        if (user) {
-            res.sendStatus(403);
-            return;
+        try {
+            await usersDao.createUser(req.body);
+            const newUser = await usersDao.findUserByUsername(req.body.username)
+            req.session["currentUser"] = newUser;
+            res.json(newUser);
+        } catch (error) {
+            res.sendStatus(403)
         }
-        const newUser = await usersDao.createUser(req.body);
-        req.session["currentUser"] = newUser;
-        res.json(newUser);
     };
 
 
@@ -18,10 +18,12 @@ const AuthController = (app) => {
         const username = req.body.username;
         const password = req.body.password;
         if (username && password) {
+            console.log("LOGIN: going to fetch user")
             const user = await usersDao.findUserByCredentials(username, password);
+            console.log("USER IS " + JSON.stringify(user))
             if (user) {
                 req.session["currentUser"] = user;
-                res.json(user);
+                res.json(user[0]);
             } else {
                 res.sendStatus(403);
             }
@@ -41,7 +43,6 @@ const AuthController = (app) => {
     };
 
     const logout = async (req, res) => {
-        console.log("REQ.SESSION: " + req.session)
         delete req.session
         res.sendStatus(200);
     };

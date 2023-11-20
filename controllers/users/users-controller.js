@@ -4,7 +4,7 @@ const UserController = (app) => {
     app.get('/api/users', findAllUsers);
     app.get('/api/users/:username', findUser);
     // app.get('/api/users/favorites/:movieid', getFavoritingUsers)
-    app.post('/api/users/register', createUser);
+    // app.post('/api/users/register', createUser);
     app.delete('/api/users/:username', deleteUser);
     app.put('/api/users/:username', updateUser);
 }
@@ -54,7 +54,6 @@ const findUser = async (req, res) => {
     const username = req.params.username;
     let user = await usersDao.findUserByUsername(username)
     if (user) {
-        console.log("RETURNING FROM CONTROLLER: " + JSON.stringify(user))
         res.json(user);
     } else {
         res.sendStatus(404);
