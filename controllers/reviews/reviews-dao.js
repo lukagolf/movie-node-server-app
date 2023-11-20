@@ -8,7 +8,7 @@ export const findCriticReviews = async (criticUsername) => {
     
 export const findMovieReviews = async (mid) => {
     let reviews = await callProcedure('get_movie_reviews', [mid])
-    console.log("After sql call, reviews is " + reviews)
+    console.log("After sql call, reviews is " + JSON.stringify(reviews))
     reviews = await addLikesDislikes(reviews)
     return reviews
 }
@@ -60,9 +60,10 @@ const addLikesDislikes = async (reviews) => {
     let n = reviews.length
     for (let i = 0; i < n; i++) {
         let likes = await getReviewLikes(reviews[i].rev_id)
-        let dislikes = await getReviewDisikes(reviews[i].rev_id)
+        let dislikes = await getReviewDisLikes(reviews[i].rev_id)
         reviews[i] = {...reviews[i], likes, dislikes}
     }
+    return reviews;
 }
 
 export const getReviewLikes = (rev_id) => callProcedure('get_review_likes', [rev_id])

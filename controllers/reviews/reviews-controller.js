@@ -2,13 +2,15 @@ import * as reviewsDao from './reviews-dao.js'
 
 const createReview = async (req, res) => {
     const newReview = req.body;
-
+    console.log("REVIEW THEY WANT TO CREATE: " + JSON.stringify(newReview))
     // Ensure the required fields are provided
-    if (!newReview.movieId || !newReview.username || !newReview.title || !newReview.rating || !newReview.description) {
+    if (!newReview.movie_id || !newReview.critic_id || !newReview.title || !newReview.rating || !newReview.review_text) {
         res.status(400).json({ message: 'Missing required fields.' });
         return;
     }
-
+    if (!newReview.date_reviewed) {
+        newReview.date_reviewed = new Date().toISOString().slice(0, 19).replace('T', ' ')
+    }
     const insertedReview = await reviewsDao.createReview(newReview);
     res.json(insertedReview);
 }
@@ -29,7 +31,7 @@ const findMovieReviews = async (req, res) => {
     const mid = req.params.movieId;
     console.log("THEY WANT REVIEWS FOR MOVIE " + mid)
     const reviews = await reviewsDao.findMovieReviews(mid);
-    console.log("RETURNING " + reviews)
+    console.log("RETURNING " + JSON.stringify(reviews))
     res.json(reviews);
 }
 

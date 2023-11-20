@@ -19,11 +19,11 @@ const AuthController = (app) => {
         const password = req.body.password;
         if (username && password) {
             console.log("LOGIN: going to fetch user")
-            const user = await usersDao.findUserByCredentials(username, password);
+            let user = await usersDao.findUserByCredentials(username, password);
             console.log("USER IS " + JSON.stringify(user))
             if (user) {
                 req.session["currentUser"] = user;
-                res.json(user[0]);
+                res.json(user);
             } else {
                 res.sendStatus(403);
             }

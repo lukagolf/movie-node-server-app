@@ -6,9 +6,7 @@ export const findAllUsers = () => callProcedure('get_all_users', [])
 export const findUserByUsername =  async (username) => { 
     try {
         let user = await callProcedure('get_by_username', [username]);
-        const savedMovies = await favorites.getFavMovies(username);
-        const followedCritics = await callProcedure('get_following', [username]); 
-        user = {...user[0], followedCritics, savedMovies, "roles": [user[0].role1, user[0].role2]}
+        user = await addExtraUserFields(user[0], username)
         return user;
     } catch (error) {
         console.log(error)
@@ -68,8 +66,27 @@ export const getUserFollows = (username) => callProcedure('get_following', [user
 
 export const getUserFollowers = (username) => callProcedure('get_followers', [username]);
 
-export const findUserByCredentials = (username, password) => callProcedure('get_by_login', [username, password])
+export const findUserByCredentials = async (username, password) => {
+    try {
+        let user = await callProcedure('get_by_login', [username, password])
+        console.log("LOGIN DAO GOT " + JSON.stringify(user))
+        user = await addExtraUserFields(user[0], username)
+        console.log("LOGIN DAO IS RETURNING" + JSON.stringify(user))
+        return user;
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 export const addFollow = (follower, followee) => callProcedure('follows_user', [follower, followee])
 
 export const unFollow = (follower, followee) => callProcedure('unfollow_user', [follower, followee])
+
+// Adds fields that frontend is expecting to user object
+const addExtraUserFields = async (user, username) => {
+    const savedMovies = await favorites.getFavMovies(username);
+    const followedCritics = await callProcedure('get_following', [username]); 
+    console.log("RETRIEVED USER: " + JSON.stringify(user))
+    user = {...user, followedCritics, savedMovies, "roles": [user.role1, user.role2]}
+    return user;
+}
