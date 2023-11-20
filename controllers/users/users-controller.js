@@ -2,16 +2,16 @@ import * as usersDao from "./users-dao.js";
 
 const UserController = (app) => {
     app.get('/api/users', findAllUsers);
-    app.get('/api/users/:idOrUsername', findUserByIdOrUsername);
+    app.get('/api/users/:username', findUser);
+    // app.get('/api/users/favorites/:movieid', getFavoritingUsers)
     app.post('/api/users', createUser);
-    app.delete('/api/users/:id', deleteUser);
-    app.put('/api/users/:id', updateUser);
+    app.delete('/api/users/:username', deleteUser);
+    app.put('/api/users/:username', updateUser);
 }
 
 const updateUser = async (req, res) => {
-    const id = req.params.id;
-    const status = await usersDao.updateUser(id, req.body);
-    const user = await usersDao.findUserById(id);
+    const id = req.params.username;
+    const status = await usersDao.updateUser(username, req.body);
     req.session["currentUser"] = user;
     res.json(status);
 };
@@ -50,21 +50,25 @@ const findAllUsers = async (req, res) => {
     }
 };
 
-const findUserByIdOrUsername = async (req, res) => {
-    const idOrUsername = req.params.idOrUsername;
-    let user;
-
-    if(isNaN(idOrUsername)) {
-        user = await usersDao.findUserByUsername(idOrUsername);
-    } else {
-        user = await usersDao.findUserById(idOrUsername);
-    }
-
+const findUser = async (req, res) => {
+    const username = req.params.username;
+    let user = await usersDao.findUserByUsername(username)
     if (user) {
+        console.log("RETURNING FROM CONTROLLER: " + JSON.stringify(user))
         res.json(user);
     } else {
         res.sendStatus(404);
     }
 };
+
+// const getFavoritingUsers = async (req, res) => {
+//     const movie = req.params.movieid;
+//     let users = await usersDao.favoritingUsers(username)
+//     if (users) {
+//         res.json(users);
+//     } else {
+//         res.sendStatus(404);
+//     }
+// };
 
 export default UserController

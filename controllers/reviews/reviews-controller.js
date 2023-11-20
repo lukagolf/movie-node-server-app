@@ -27,7 +27,9 @@ const findCriticReviews = async (req, res) => {
 
 const findMovieReviews = async (req, res) => {
     const mid = req.params.movieId;
+    console.log("THEY WANT REVIEWS FOR MOVIE " + mid)
     const reviews = await reviewsDao.findMovieReviews(mid);
+    console.log("RETURNING " + reviews)
     res.json(reviews);
 }
 
@@ -45,7 +47,7 @@ const deleteReview = async (req, res) => {
 }
 
 export default (app) => {
-    app.post('/api/reviews', createReview);
+    app.post('/api/reviews',createReview);
     app.get('/api/reviews', findReviews);
     app.get('/api/reviews/findCriticReviews/:username', findCriticReviews);
     app.get('/api/reviews/findMovieReviews/:movieId', findMovieReviews);
