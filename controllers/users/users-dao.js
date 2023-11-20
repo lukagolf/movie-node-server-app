@@ -5,6 +5,7 @@ export const findAllUsers = () => callProcedure('get_all_users', [])
 
 export const findUserByUsername =  async (username) => { 
     try {
+        console.log("IN FIND BY USERNAME")
         let user = await callProcedure('get_by_username', [username]);
         const savedMovies = await favorites.getFavMovies(username);
         const followedCritics = await callProcedure('get_following', [username]); 
@@ -27,6 +28,7 @@ export const createUser = ({
 }) => {
     const role1 = roles[0]
     const role2 = roles[1]
+    console.log("CREATE USER: role1 is " + role1 + " and role2 is " + role2)
     callProcedure('add_user', [
         username,
         password,
