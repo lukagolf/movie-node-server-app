@@ -9,13 +9,32 @@ CREATE TABLE movies (
     tmdb_id VARCHAR(255) UNIQUE NOT NULL
 );
 
+CREATE TABLE genres (
+	genre_name VARCHAR(50) PRIMARY KEY
+);
+
+CREATE TABLE movie_has_genre (
+	movie_id INT,
+    genre_name VARCHAR(50),
+    PRIMARY KEY (movie_id, genre_name),
+    CONSTRAINT FOREIGN KEY movie_w_genre_fk (movie_id) REFERENCES
+		movies (movie_id) ON UPDATE RESTRICT
+						  ON DELETE CASCADE,
+	CONSTRAINT FOREIGN KEY genre_of_movie_fk (genre_name) REFERENCES
+		genres (genre_name) ON UPDATE CASCADE
+							ON DELETE CASCADE
+);
+
 CREATE TABLE users (
 	user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) UNIQUE NOT NULL,
     pword VARCHAR(64) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    role1 ENUM ('Admin', 'Viewer', 'Critic') NOT NULL,
+    role2 ENUM ('Admin', 'Viewer', 'Critic'),
     firstname VARCHAR(64) NOT NULL,
-    lastname VARCHAR(64) NOT NULL
+    lastname VARCHAR(64) NOT NULL,
+    CONSTRAINT unique_roles CHECK (role1 != role2)
 );
 
 CREATE TABLE user_follows_user (
@@ -42,23 +61,6 @@ CREATE TABLE user_favorites_movie (
 					      ON DELETE CASCADE
 );
 
-CREATE TABLE user_roles (
-	role_name VARCHAR(64) PRIMARY KEY
-);
-INSERT INTO user_roles VALUES ('Admin'),('Viewer'),('Critic');
-
-CREATE TABLE user_has_role (
-	user_id INT,
-    role_name VARCHAR(64),
-    PRIMARY KEY(user_id, role_name),
-	CONSTRAINT FOREIGN KEY user_with_role_fk (user_id) REFERENCES
-		users (user_id) ON UPDATE RESTRICT
-						ON DELETE CASCADE,
-	CONSTRAINT FOREIGN KEY role_of_user_fk (role_name) REFERENCES
-		user_roles (role_name) ON UPDATE RESTRICT
-							   ON DELETE RESTRICT
-);
-
 CREATE TABLE reviews (
 	rev_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -72,7 +74,7 @@ CREATE TABLE reviews (
 					      ON DELETE CASCADE,
 	CONSTRAINT FOREIGN KEY reviewer_fk (critic_id) REFERENCES
 	users (user_id) ON UPDATE RESTRICT
-					  ON DELETE CASCADE
+					ON DELETE CASCADE
 );
 
 CREATE TABLE user_likes_review (
@@ -122,9 +124,4 @@ CREATE TABLE reports (
     CONSTRAINT FOREIGN KEY review_reported_fk (rev_id) REFERENCES 
 		reviews (rev_id) ON UPDATE RESTRICT
 						 ON DELETE CASCADE
-);
-
-CREATE TABLE sessions (
-	cookie INT PRIMARY KEY,
-    exp_date DATETIME
 );
