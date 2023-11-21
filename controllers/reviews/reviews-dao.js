@@ -36,7 +36,6 @@ export const deleteReview = (rid) => reviewsModel.deleteOne({ _id: rid });
 export const updateReview = (
     {
         rev_id,
-        category,
         title,
         movie_id,
         review_text,
@@ -46,7 +45,6 @@ export const updateReview = (
     }
 ) => callProcedure('update_review', [
     rev_id,
-    category,
     title,
     movie_id,
     review_text,
@@ -60,7 +58,9 @@ const addLikesDislikes = async (reviews) => {
     let n = reviews.length
     for (let i = 0; i < n; i++) {
         let likes = await getReviewLikes(reviews[i].rev_id)
+        likes = likes.map(like => like.username)
         let dislikes = await getReviewDisLikes(reviews[i].rev_id)
+        dislikes = dislikes.map(dislike => dislike.username)
         reviews[i] = {...reviews[i], likes, dislikes}
     }
     return reviews;
@@ -69,6 +69,17 @@ const addLikesDislikes = async (reviews) => {
 export const getReviewLikes = (rev_id) => callProcedure('get_review_likes', [rev_id])
 
 export const getReviewDisLikes = (rev_id) => callProcedure('get_review_dislikes', [rev_id])
+
+export const getReviewByCriticMovie = (rev_id) => callProcedure('get_review_by_id', [rev_id])
+
+export const likeReview = (rev_id, username) => callProcedure('like_review', [username, rev_id])
+
+export const dislikeReview = (rev_id, username) => callProcedure('dislike_review', [username, rev_id])
+
+export const unlikeReview = (rev_id, username) => callProcedure('unlike_review', [username, rev_id])
+
+export const undislikeReview = (rev_id, username) => callProcedure('undislike_review', [username, rev_id])
+
 
 
 /* Needed SQL: 

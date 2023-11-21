@@ -7,8 +7,7 @@ CREATE TABLE movies (
     title VARCHAR(255),
     release_date DATE,
     summary VARCHAR(5000) NOT NULL,
-    photo_url VARCHAR(1000),
-    UNIQUE(title, release_date)
+    photo_url VARCHAR(1000)
 );
 CREATE TABLE genres (
 	genre_name VARCHAR(50) PRIMARY KEY
@@ -69,6 +68,7 @@ CREATE TABLE reviews (
     date_reviewed DATETIME NOT NULL,
     rating INT NOT NULL,
     critic_id VARCHAR(64) NOT NULL,
+    UNIQUE(movie_id, critic_id),
     CONSTRAINT FOREIGN KEY reviewed_movie_fk (movie_id) REFERENCES
 		movies (movie_id) ON UPDATE RESTRICT
 					      ON DELETE CASCADE,

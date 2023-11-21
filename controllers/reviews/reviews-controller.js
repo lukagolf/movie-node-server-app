@@ -2,7 +2,6 @@ import * as reviewsDao from './reviews-dao.js'
 
 const createReview = async (req, res) => {
     const newReview = req.body;
-    console.log("REVIEW THEY WANT TO CREATE: " + JSON.stringify(newReview))
     // Ensure the required fields are provided
     if (!newReview.movie_id || !newReview.critic_id || !newReview.title || !newReview.rating || !newReview.review_text) {
         res.status(400).json({ message: 'Missing required fields.' });
@@ -11,8 +10,12 @@ const createReview = async (req, res) => {
     if (!newReview.date_reviewed) {
         newReview.date_reviewed = new Date().toISOString().slice(0, 19).replace('T', ' ')
     }
-    const insertedReview = await reviewsDao.createReview(newReview);
-    res.json(insertedReview);
+    try {
+        const insertedReview = await reviewsDao.createReview(newReview);
+        res.json(insertedReview[0]);
+    } catch (error) {
+        res.sendStatus(409)
+    }
 }
 
 
@@ -48,11 +51,44 @@ const deleteReview = async (req, res) => {
     res.json(status);
 }
 
+const likeReview = async (req, res) => {
+    const {username, rid} = req.params
+    console.log("Going to like a review with " + username + " " + rid)
+    const status = await reviewsDao.likeReview(rid, username)
+    res.json(status)
+}
+
+const unlikeReview = async (req, res) => {
+    const {username, rid} = req.params
+    console.log("Going to unlike a review with " + username + " " + rid)
+    const status = await reviewsDao.unlikeReview(rid, username)
+    res.json(status)
+}
+
+
+const dislikeReview = async (req, res) => {
+    const {username, rid} = req.params
+    const status = await reviewsDao.dislikeReview(rid, username)
+    res.json(status)
+}
+
+const undislikeReview = async (req, res) => {
+    const {username, rid} = req.params
+    console.log("Undislike! " + username + " " + rid) 
+    const status = await reviewsDao.undislikeReview(rid, username)
+    res.json(status)
+}
+
+
 export default (app) => {
     app.post('/api/reviews',createReview);
     app.get('/api/reviews', findReviews);
     app.get('/api/reviews/findCriticReviews/:username', findCriticReviews);
     app.get('/api/reviews/findMovieReviews/:movieId', findMovieReviews);
     app.put('/api/reviews/:rid', updateReview);
+    app.put('/api/reviews/like/:rid/:username', likeReview);
+    app.put('/api/reviews/dislike/:rid/:username', dislikeReview);
+    app.put('/api/reviews/unlike/:rid/:username', unlikeReview);
+    app.put('/api/reviews/undislike/:rid/:username', undislikeReview);
     app.delete('/api/reviews/:rid', deleteReview);
 }
