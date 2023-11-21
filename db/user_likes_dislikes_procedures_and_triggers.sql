@@ -90,32 +90,33 @@ END $$
 DELIMITER ;
 
 
+DELIMITER $$
 -- Function: getReviewLikes
 -- Description: Retrieves a list of reviews that a specific user has liked
 -- Parameters:
 --   us_id (INT): The ID of the user whose liked reviews are to be retrieved.
 -- Returns: A table containing the reviews that the specific user has liked.
-
 DROP FUNCTION IF EXISTS getReviewLikes;
-DELIMITER $$
 CREATE FUNCTION getReviewLikes(us_id INT)
 RETURNS TABLE
 RETURN SELECT COUNT(*) FROM user_likes_review WHERE user_id = us_id;
-END $$
 DELIMITER ;
 
+DELIMITER $$
 
+
+DELIMITER $$
 -- Function: getReviewDislikes
 -- Description: Retrieves a list of reviews that a specific user has disliked
 -- Parameters:
 --   us_id (INT): The ID of the user whose disliked reviews are to be retrieved.
 -- Returns: A table containing the reviews that the specific user has disliked.
 DROP FUNCTION IF EXISTS getReviewDislikes;
-DELIMITER $$
 CREATE FUNCTION getReviewDislikes(us_id INT)
 RETURNS TABLE
 RETURN SELECT COUNT(*) FROM user_dislikes_review WHERE user_id = us_id;
-END $$
 DELIMITER ;
+
+DELIMITER $$
 
 

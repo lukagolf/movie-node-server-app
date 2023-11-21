@@ -49,6 +49,7 @@ BEGIN
   DELETE FROM user_dislikes_review WHERE rev_id = review_id;
   DELETE FROM reports WHERE rev_id = review_id;
   DELETE FROM reviews WHERE rev_id = review_id;
+  END IF;
 END $$
 DELIMITER ;
 
@@ -82,34 +83,41 @@ END $$
 DELIMITER ;
 
 
+
+DELIMITER $$
+
 -- Function: getCriticReviews
 -- Description: Retrieves a list of reviews a particular critic has written.
 -- Parameters:
 --   cid (INT): The ID of the critic whose written reviews are to be retrieved.
 -- Returns: A table containing the reviews written by the specific critic.
 DROP FUNCTION IF EXISTS getCriticReviews;
-DELIMITER $$
 CREATE FUNCTION getCriticReviews(cid INT)
 RETURNS TABLE
 RETURN SELECT * FROM reviews WHERE critic_id = cid;
-END $$
-DELIMITER ; 
+DELIMITER ;
 
+DELIMITER $$
+
+
+
+DELIMITER $$
 
 -- Function: getMovieReviews
 -- Description: Retrieves a list of reviews given a particular movie
 -- Parameters:
 --   mid (INT): The ID of the movie whose reviews are to be retrieved.
 -- Returns: A table containing the reviews of the specific movie with the movie_id.
-
 DROP FUNCTION IF EXISTS getMovieReviews;
-DELIMITER $$
 CREATE FUNCTION getMovieReviews(mid INT)
 RETURNS TABLE
 RETURN SELECT * FROM reviews WHERE movie_id = mid;
-END $$
 DELIMITER ;
 
+DELIMITER $$
+
+
+DELIMITER $$
 
 -- Function: getReviewsByDate
 -- Description: Retrieves a list of reviews from a particular date
@@ -117,9 +125,9 @@ DELIMITER ;
 --   r_date (DATETIME): The date to retrieve reviews written on that date from.
 -- Returns: A table containing all reviews written on a particular date.
 DROP FUNCTION IF EXISTS getReviewsByDate;
-DELIMITER $$
 CREATE FUNCTION getReviewsByDate(r_date DATETIME)
 RETURNS TABLE
 RETURN SELECT * FROM reviews WHERE date_reviewed = r_date;
-END $$
 DELIMITER ;
+
+DELIMITER $$
