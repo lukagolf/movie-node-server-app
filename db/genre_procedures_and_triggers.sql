@@ -62,11 +62,11 @@ DELIMITER ;
 
 /* Procedure: give_movie_genre
  * Does:      creates association between provided genre and movie in
- *			  movie_has_genre table.
+ *			  movie_has_genre table. If genre does not exist, creates an
+ *			  entry for it.
  * Params: 	  movie_id_p: id of movie with genre
  *			  genre_name_p: name of genre being associated with the movie
- * Signals:   SQLSTATE 45000 if given movie or genre do not exist
-
+ * Signals:   SQLSTATE 45000 if given movie does not exist
  */
 DROP PROCEDURE IF EXISTS give_movie_genre;
 DELIMITER $$
@@ -74,13 +74,12 @@ CREATE PROCEDURE give_movie_genre(movie_id_p INT, genre_name_p VARCHAR(50))
 BEGIN
 	IF NOT EXISTS (SELECT movie_id FROM movies WHERE movie_id = movie_id_p) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Movie not found';
-	ELSEIF NOT EXISTS (SELECT genre_name FROM genres WHERE genre_name = genre_name_p) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid genre';
+	ELSEIF NOT EXISTS (SELECT genre_name FROM genres WHERE genre_name = UPPER(genre_name_p)) THEN
+		INSERT INTO genres VALUES (genre_name_p);
 	END IF;
-    INSERT INTO movie_has_genre VALUES(movie_id_p, genre_name_p);
+    INSERT INTO movie_has_genre VALUES(movie_id_p, UPPER(genre_name_p));
 END $$
 DELIMITER ;
-
 
 /* Procedure: remove_movie_genre
  * Does:      Revokes specified genre associated with supplied movie.
@@ -103,3 +102,18 @@ BEGIN
 END $$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS get_movie_genres
+DELIMITER $$
+/* Proecdure: get_movie_genres
+ * Does: 	  returns list of genres for supplied movie
+ * Takes:	  ID of movie whose genres will be retrieved
+ * Signals:   SQLSTATE 45000 if supplied movie does not exist
+ */
+CREATE PROCEDURE get_movie_genres(mid INT)
+BEGIN
+IF NOT EXISTS (SELECT movie_id FROM movies WHERE movie_id = mid) THEN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Movie not found';
+END IF;
+SELECT genre_name FROM movie_has_genre WHERE movie_id = mid;
+END $$
+DELIMITER ;

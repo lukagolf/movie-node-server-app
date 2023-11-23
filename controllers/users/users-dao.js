@@ -40,22 +40,23 @@ export const createUser = ({
 // will need to pass like 7 params instead, destructuring syntax
 export const updateUser = (u_name, {
     username,
-    password,
+    pword,
     email,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
     roles
 }) => {
     const role1 = roles[0]
     const role2 = roles[1]
     callProcedure('update_user', [
+        u_name,
         username,
-        password,
+        pword,
         email,
         role1,
         role2,
-        firstName,
-        lastName
+        firstname,
+        lastname
     ])
     return findUserByUsername(username);
 };
@@ -81,6 +82,11 @@ export const findUserByCredentials = async (username, password) => {
 export const addFollow = (follower, followee) => callProcedure('follows_user', [follower, followee])
 
 export const unFollow = (follower, followee) => callProcedure('unfollow_user', [follower, followee])
+
+export const saveMovie = (username, movie_id) => callProcedure('favorite_movie', [username, movie_id])
+
+export const unsaveMovie = (username, movie_id) => callProcedure('unfavorite_movie', [username, movie_id])
+
 
 // Adds fields that frontend is expecting to user object
 const addExtraUserFields = async (user, username) => {

@@ -7,7 +7,7 @@
 DROP PROCEDURE IF EXISTS add_movie;
 DELIMITER //
 -- Procedure: add_movie
--- Description: Inserts a new movie into the `movies` table.
+-- Description: Inserts a new movie into the `movies` table, then returns it
 -- Parameters:
 --   movieTitle (VARCHAR(1000)): The title of the movie.
 --   tmdbId (VARCHAR(255)): The TMDB (The Movie Database) ID of the movie.
@@ -18,6 +18,7 @@ CREATE PROCEDURE add_movie(movie_title VARCHAR(1000),
 BEGIN
   INSERT INTO movies (title, release_date, summary, photo_url) 
 	VALUES (movie_title, movie_release, movie_summary, movie_photo_url);
+  SELECT * FROM movies WHERE title = movie_title AND release_date = movie_release;
 END //
 DELIMITER ;
 
@@ -96,8 +97,8 @@ SELECT * FROM movies
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS get_favorite_movies;
-DELIMITER //
+-- DROP PROCEDURE IF EXISTS get_favorite_movies;
+-- DELIMITER //
 -- Procedure: get_favorited_movie
 -- Description: get a list of a user's favorite movies 
 -- Parameters:

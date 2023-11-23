@@ -11,9 +11,11 @@ const createReview = async (req, res) => {
         newReview.date_reviewed = new Date().toISOString().slice(0, 19).replace('T', ' ')
     }
     try {
-        const insertedReview = await reviewsDao.createReview(newReview);
-        res.json(insertedReview[0]);
+        let insertedReview = await reviewsDao.createReview(newReview);
+        insertedReview = {...insertedReview[0], likes: [], dislikes: []}
+        res.json(insertedReview);
     } catch (error) {
+        console.log(error)
         res.sendStatus(409)
     }
 }
@@ -32,9 +34,7 @@ const findCriticReviews = async (req, res) => {
 
 const findMovieReviews = async (req, res) => {
     const mid = req.params.movieId;
-    console.log("THEY WANT REVIEWS FOR MOVIE " + mid)
     const reviews = await reviewsDao.findMovieReviews(mid);
-    console.log("RETURNING " + JSON.stringify(reviews))
     res.json(reviews);
 }
 
@@ -53,14 +53,12 @@ const deleteReview = async (req, res) => {
 
 const likeReview = async (req, res) => {
     const {username, rid} = req.params
-    console.log("Going to like a review with " + username + " " + rid)
     const status = await reviewsDao.likeReview(rid, username)
     res.json(status)
 }
 
 const unlikeReview = async (req, res) => {
     const {username, rid} = req.params
-    console.log("Going to unlike a review with " + username + " " + rid)
     const status = await reviewsDao.unlikeReview(rid, username)
     res.json(status)
 }
@@ -74,7 +72,6 @@ const dislikeReview = async (req, res) => {
 
 const undislikeReview = async (req, res) => {
     const {username, rid} = req.params
-    console.log("Undislike! " + username + " " + rid) 
     const status = await reviewsDao.undislikeReview(rid, username)
     res.json(status)
 }

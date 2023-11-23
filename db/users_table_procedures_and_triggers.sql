@@ -34,7 +34,7 @@ DELIMITER //
 -- Procedure: update_user
 -- Description: Updates details of an existing user in the `users` table.
 -- Parameters:
---   user_id_p (INT): The ID of the user to update.
+--   old_username (VARCHAR(64)): The username of the user to update.
 --   new_username (VARCHAR(64)): The new username of the user.
 --   new_pword (VARCHAR(64)): The new password of the user.
 --   new_email (VARCHAR(100)): The new email of the user.
@@ -42,7 +42,8 @@ DELIMITER //
 --   new_role2 (ENUM ('Admin', 'Viewer', 'Critic')): secondary site role (optional)
 --   new_firstname (VARCHAR(64)): The new first name of the user.
 --   new_lastname (VARCHAR(64)): The new last name of the user.
-CREATE PROCEDURE update_user(IN new_username VARCHAR(64), 
+CREATE PROCEDURE update_user(IN old_username VARCHAR(64),
+							 IN new_username VARCHAR(64), 
                              IN new_pword VARCHAR(64), 
                              IN new_email VARCHAR(100), 
                              IN new_role1  ENUM ('Admin', 'Viewer', 'Critic'), 
@@ -57,7 +58,7 @@ BEGIN
                    role2 = new_role2, 
                    firstname = new_firstname, 
                    lastname = new_lastname 
-                   WHERE user_id = user_id_p;
+                   WHERE username = old_username;
 END //
 DELIMITER ;
 
@@ -136,3 +137,5 @@ SELECT * FROM users
 		  pword_p = pword;
 END $$
 DELIMITER ;
+
+SELECT * FROM reviews;

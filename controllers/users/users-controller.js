@@ -4,16 +4,31 @@ const UserController = (app) => {
     app.get('/api/users', findAllUsers);
     app.get('/api/users/:username', findUser);
     // app.get('/api/users/favorites/:movieid', getFavoritingUsers)
-    // app.post('/api/users/register', createUser);
-    app.delete('/api/users/:username', deleteUser);
+    app.post('/api/users/register', createUser);
+    app.put('/api/users/save/:username/:movie_id', saveMovie);
+    app.put('/api/users/unsave/:username/:movie_id', unsaveMovie);
     app.put('/api/users/:username', updateUser);
 }
 
+const saveMovie = async (req, res) => {
+    console.log("Save request!")
+    const { username, movie_id } = req.params
+    const status = usersDao.saveMovie(username, movie_id)
+    res.json(status)
+}
+
+const unsaveMovie = async (req, res) => {
+    console.log("Unsave request!")
+    const { username, movie_id } = req.params
+    const status = usersDao.unsaveMovie(username, movie_id)
+    res.json(status)
+}
+
 const updateUser = async (req, res) => {
-    const id = req.params.username;
-    const status = await usersDao.updateUser(username, req.body);
+    const username = req.params.username;
+    const user = await usersDao.updateUser(username, req.body);
     req.session["currentUser"] = user;
-    res.json(status);
+    res.json(user);
 };
 
 const deleteUser = async (req, res) => {
