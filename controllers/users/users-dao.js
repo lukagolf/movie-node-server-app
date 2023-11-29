@@ -66,9 +66,17 @@ export const deleteUser = (username) => {
     callProcedure('delete_user', [username]);
 }
 
-export const getUserFollows = (username) => callProcedure('get_following', [username]);
+// for critics a user is following
+export const getUserFollows = async (username) => {
+    const following = await callProcedure('get_following', [username]);
+    return following.map(critic => critic.followed_id)
+}
 
-export const getUserFollowers = (username) => callProcedure('get_followers', [username]);
+// for viewers following a critic
+export const getUserFollowers = async (username) => {
+    const followers = await callProcedure('get_followers', [username]);
+    return followers.map(viewer => viewer.follower_id)
+}
 
 export const findUserByCredentials = async (username, password) => {
     try {

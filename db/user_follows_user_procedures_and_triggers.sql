@@ -1,3 +1,4 @@
+USE moviesite;
 -- user_follows_user_procedures_and_triggers.sql
 -- This file contains procedures, functions, and triggers for the
 -- `user_follows_user` table in the `moviesite` database.
@@ -10,9 +11,9 @@ DELIMITER //
 -- Procedure: follows_user
 -- Description: Adds a new follower relationship between two users.
 -- Parameters:
---   follower_id_p (INT): The ID of the user who is following.
---   followed_id_p (INT): The ID of the user who is being followed.
-CREATE PROCEDURE follows_user(IN follower_id_p INT, IN followed_id_p INT)
+--   follower_id_p (VARCHAR): The username of the user who is following.
+--   followed_id_p (VARCHAR): The username of the user who is being followed.
+CREATE PROCEDURE follows_user(IN follower_id_p VARCHAR(64), IN followed_id_p VARCHAR(64))
 BEGIN
   INSERT INTO user_follows_user (follower_id, followed_id) VALUES (follower_id_p, followed_id_p);
 END //

@@ -47,7 +47,7 @@ CREATE TABLE user_follows_user (
     CONSTRAINT FOREIGN KEY follower_fk (follower_id) REFERENCES 
 		users (username) ON UPDATE RESTRICT
 						ON DELETE CASCADE,
-	CONSTRAINT FOREIGN KEY follower_fk (followed_id) REFERENCES 
+	CONSTRAINT FOREIGN KEY followed_fk (followed_id) REFERENCES 
 	users (username) ON UPDATE RESTRICT
 					ON DELETE CASCADE
 );
@@ -135,3 +135,4 @@ CREATE TABLE reports (
 		reviews (rev_id) ON UPDATE RESTRICT
 						 ON DELETE CASCADE
 );
+
