@@ -55,6 +55,7 @@ const unsaveMovie = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
+    console.log("update user with " + JSON.stringify(req.body))
     const username = req.params.username;
     const user = await usersDao.updateUser(username, req.body);
     req.session["currentUser"] = user;
