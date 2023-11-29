@@ -65,17 +65,17 @@ DELIMITER ;
 -- Procedure: delete_user
 -- Description: Deletes a user from the `users` table.
 -- Parameters:
---   user_id_del (INT): The ID of the user to delete.
+--   username_p (VARCHAR): The username of the user to delete.
 DROP PROCEDURE IF EXISTS delete_user;
 DELIMITER //
-CREATE PROCEDURE delete_user(IN user_id_del INT)
+CREATE PROCEDURE delete_user(IN username_p VARCHAR(64))
 BEGIN
-  DELETE FROM user_likes_review WHERE user_id = user_id_del;
-  DELETE FROM user_dislikes_review WHERE user_id = user_id_del;
-  DELETE FROM user_favorites_movie WHERE user_id = user_id_del;
-  DELETE FROM user_follows_user WHERE follower_id = user_id_del OR
-									  followed_id = user_id_del;
-  DELETE FROM users WHERE user_id = userId;
+  DELETE FROM user_likes_review WHERE username = username_p;
+  DELETE FROM user_dislikes_review WHERE username = username_p;
+  DELETE FROM user_favorites_movie WHERE username = username_p;
+  DELETE FROM user_follows_user WHERE follower_id = username_p;
+  DELETE FROM user_follows_user WHERE followed_id = username_p;
+  DELETE FROM users WHERE username = username_p;
 END //
 DELIMITER ;
 
@@ -94,20 +94,6 @@ SELECT * FROM users
 	  OR CONCAT(first_name, ' ', last_name) LIKE CONCAT('%', search_term, '%')
 	  OR username LIKE CONCAT('%', search_term, '%')
 	  OR email LIKE CONCAT('%', search_term, '%');
-END //
-DELIMITER ;
-
-DROP PROCEDURE IF EXISTS get_user_by_id;
-DELIMITER //
--- Function: get_user_by_id
--- Description: Retrieves user details corresponding to supplied id
--- Parameters:
---   user_id_p (INT): ID of the user to be returned
--- Returns: A table containing users that match the search term.
-CREATE PROCEDURE get_user_by_id(user_id_p INT)
-BEGIN
-SELECT * FROM users
-   WHERE user_id = user_id_p;
 END //
 DELIMITER ;
 
@@ -137,5 +123,3 @@ SELECT * FROM users
 		  pword_p = pword;
 END $$
 DELIMITER ;
-
-SELECT * FROM reviews;

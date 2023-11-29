@@ -47,6 +47,7 @@ const updateReview = async (req, res) => {
 
 const deleteReview = async (req, res) => {
     const reviewIdToDelete = req.params.rid;
+    console.log("delete request!")
     const status = await reviewsDao.deleteReview(reviewIdToDelete);
     res.json(status);
 }

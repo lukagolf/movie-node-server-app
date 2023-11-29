@@ -1,7 +1,7 @@
 import callProcedure from "../../db/nodejs-connect/call-sql-procedure.js"
 
 export const findCriticReviews = async (criticUsername) => {
-    let reviews = await callProcedure('get_critic_reviews', [criticUsername])
+    let reviews = await callProcedure('get_critic_reviews_plus_movie', [criticUsername])
     reviews = await addLikesDislikes(reviews)
     return reviews
 }
@@ -30,7 +30,11 @@ export const createReview = (
     rating,
     critic_id
 ])
-export const deleteReview = (rid) => reviewsModel.deleteOne({ _id: rid });
+
+export const deleteReview = (rid) => {
+    console.log("Going to delete review for " + rid)
+    callProcedure('delete_review', [rid]);
+}
 
 // add "date updated" field if time
 export const updateReview = (

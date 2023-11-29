@@ -61,7 +61,10 @@ export const updateUser = (u_name, {
     return findUserByUsername(username);
 };
 
-export const deleteUser = (username) => callProcedure('delete_user', [username]);
+export const deleteUser = (username) => {
+    console.log("going to delete user with " + username)
+    callProcedure('delete_user', [username]);
+}
 
 export const getUserFollows = (username) => callProcedure('get_following', [username]);
 
@@ -70,9 +73,7 @@ export const getUserFollowers = (username) => callProcedure('get_followers', [us
 export const findUserByCredentials = async (username, password) => {
     try {
         let user = await callProcedure('get_by_login', [username, password])
-        console.log("LOGIN DAO GOT " + JSON.stringify(user))
         user = await addExtraUserFields(user[0], username)
-        console.log("LOGIN DAO IS RETURNING" + JSON.stringify(user))
         return user;
     } catch (error) {
         console.log(error)
@@ -92,7 +93,6 @@ export const unsaveMovie = (username, movie_id) => callProcedure('unfavorite_mov
 const addExtraUserFields = async (user, username) => {
     const savedMovies = await favorites.getFavMovies(username);
     const followedCritics = await callProcedure('get_following', [username]); 
-    console.log("RETRIEVED USER: " + JSON.stringify(user))
     user = {...user, followedCritics, savedMovies, "roles": [user.role1, user.role2]}
     return user;
 }

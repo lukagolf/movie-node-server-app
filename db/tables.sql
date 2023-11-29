@@ -113,12 +113,12 @@ CREATE TABLE user_dislikes_review (
 
 CREATE TABLE reports (
 	rep_id INT AUTO_INCREMENT PRIMARY KEY,
-    category ENUM('Unwanted commercial content or spam', 
-				  'Illegal content', 
-                  'Harassment or bullying', 
-                  'Unmarked spoilers', 
-                  'Misinformation',
-                  'Other') NOT NULL,
+    category ENUM('spam', 
+				  'illegal', 
+                  'harassment', 
+                  'spoilers', 
+                  'misinformation',
+                  'other') NOT NULL,
 	date_submitted DATETIME NOT NULL,
     submitter_id VARCHAR(64) NOT NULL,
     admin_id VARCHAR(64),
@@ -130,7 +130,7 @@ CREATE TABLE reports (
 					ON DELETE NO ACTION,
 	CONSTRAINT FOREIGN KEY report_reviewer_fk (admin_id) REFERENCES 
 		users (username) ON UPDATE RESTRICT
-						 ON DELETE RESTRICT,
+						 ON DELETE SET NULL,
     CONSTRAINT FOREIGN KEY review_reported_fk (rev_id) REFERENCES 
 		reviews (rev_id) ON UPDATE RESTRICT
 						 ON DELETE CASCADE

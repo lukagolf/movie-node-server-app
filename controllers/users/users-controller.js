@@ -8,17 +8,16 @@ const UserController = (app) => {
     app.put('/api/users/save/:username/:movie_id', saveMovie);
     app.put('/api/users/unsave/:username/:movie_id', unsaveMovie);
     app.put('/api/users/:username', updateUser);
+    app.delete('/api/users/:username', deleteUser)
 }
 
 const saveMovie = async (req, res) => {
-    console.log("Save request!")
     const { username, movie_id } = req.params
     const status = usersDao.saveMovie(username, movie_id)
     res.json(status)
 }
 
 const unsaveMovie = async (req, res) => {
-    console.log("Unsave request!")
     const { username, movie_id } = req.params
     const status = usersDao.unsaveMovie(username, movie_id)
     res.json(status)
@@ -32,7 +31,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params.username;
     const status = await usersDao.deleteUser(id);
     res.json(status);
 };
