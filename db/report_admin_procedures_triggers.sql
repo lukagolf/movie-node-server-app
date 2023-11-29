@@ -201,6 +201,6 @@ DROP TRIGGER IF EXISTS resolve_reports_deleted_review;
  *			review is deleted
  */
 CREATE TRIGGER resolve_reports_deleted_review
-AFTER DELETE ON reviews
+BEFORE DELETE ON reviews
 FOR EACH ROW
 CALL resolve_all_review_reports(OLD.rev_id);

@@ -19,7 +19,6 @@ const getFollowedCritics = async (req, res) => {
     console.log("Get followed request")
     const { username } = req.params
     const followedCritics = await usersDao.getUserFollows(username)
-    console.log("Returning " + JSON.stringify(followedCritics))
     res.json(followedCritics)
 }
 
