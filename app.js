@@ -2,18 +2,31 @@ import express from 'express';
 import cors from 'cors';
 import UserController from "./controllers/users/users-controller.js";
 import ReviewsController from "./controllers/reviews/reviews-controller.js";
+import ReportsController from "./controllers/reports/reports-controller.js";
+import MoviesController from "./controllers/movies/movies-controller.js";
 import session from "express-session";
 import AuthController from "./controllers/users/auth-controller.js";
-import mongoose from "mongoose";
-import MongoStore from "connect-mongo";
 import { config as dotenvConfig } from 'dotenv';
+import MySQLSession from 'express-mysql-session'
 
 dotenvConfig();
-
-const CONNECTION_STRING = process.env.DB_CONNECTION_STRING /* || 'mongodb://127.0.0.1:27017/movie'; */ // now everything is remote
-mongoose.connect(CONNECTION_STRING);
-
 const app = express();
+
+const MySQLStore = MySQLSession(session);
+
+const options = {
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'moviesite',
+    clearExpired: true,
+    checkExpirationInterval: 900000, // How frequently expired sessions will be cleared in ms.
+    expiration: 86400000, // Max age of valid session in ms.
+};
+
+const sessionStore = new MySQLStore(options);
+
 
 app.use(
     cors({
@@ -33,10 +46,7 @@ app.use(
             secure: false, // the important part, changed for local testing
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         },
-        store: MongoStore.create({
-            mongoUrl: CONNECTION_STRING,
-            ttl: 14 * 24 * 60 * 60 // = 14 days. Default
-        })
+        store: sessionStore
     })
 );
 
@@ -44,4 +54,6 @@ app.use(express.json());
 ReviewsController(app);
 UserController(app)
 AuthController(app);
+ReportsController(app);
+MoviesController(app);
 app.listen(process.env.PORT || 4000);
