@@ -37,9 +37,8 @@ export const deleteReview = (rid) => {
 }
 
 // add "date updated" field if time
-export const updateReview = (
+export const updateReview = ( rev_id,
     {
-        rev_id,
         title,
         movie_id,
         review_text,

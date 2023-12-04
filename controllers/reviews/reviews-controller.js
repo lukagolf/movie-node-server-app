@@ -13,6 +13,7 @@ const createReview = async (req, res) => {
     try {
         let insertedReview = await reviewsDao.createReview(newReview);
         insertedReview = {...insertedReview[0], likes: [], dislikes: []}
+        console.log("RETURNING " + JSON.stringify(insertedReview))
         res.json(insertedReview);
     } catch (error) {
         console.log(error)
