@@ -58,8 +58,12 @@ const updateUser = async (req, res) => {
     console.log("update user with " + JSON.stringify(req.body))
     const username = req.params.username;
     const user = await usersDao.updateUser(username, req.body);
-    req.session["currentUser"] = user;
-    res.json(user);
+    if (user == -1) {
+        res.sendStatus(409)
+    } else {
+        req.session["currentUser"] = user;
+        res.json(user);
+    }
 };
 
 const deleteUser = async (req, res) => {
