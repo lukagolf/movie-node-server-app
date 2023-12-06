@@ -2,22 +2,68 @@ import * as usersDao from "./users-dao.js";
 
 const UserController = (app) => {
     app.get('/api/users', findAllUsers);
-    app.get('/api/users/:idOrUsername', findUserByIdOrUsername);
-    app.post('/api/users', createUser);
-    app.delete('/api/users/:id', deleteUser);
-    app.put('/api/users/:id', updateUser);
+    app.get('/api/users/:username', findUser);
+    // app.get('/api/users/favorites/:movieid', getFavoritingUsers)
+    // app.post('/api/users/register', createUser);
+    app.put('/api/users/save/:username/:movie_id', saveMovie);
+    app.put('/api/users/unsave/:username/:movie_id', unsaveMovie);
+    app.put('/api/users/:username', updateUser);
+    app.delete('/api/users/:username', deleteUser)
+    app.get('/api/users/follows/:username', getFollowedCritics)
+    app.get('/api/users/followers/:username', getFollowers)
+    app.post('/api/users/follows/:viewer/:critic', addFollow)
+    app.delete('/api/users/follows/:viewer/:critic', removeFollow)
+}
+
+const getFollowedCritics = async (req, res) => {
+    console.log("Get followed request")
+    const { username } = req.params
+    const followedCritics = await usersDao.getUserFollows(username)
+    res.json(followedCritics)
+}
+
+const getFollowers = async (req, res) => {
+    const { username } = req.params
+    const followers = await usersDao.getUserFollowers(username)
+    res.json(followers)
+}
+
+const addFollow = async (req, res) => {
+    const { viewer, critic } = req.params
+    const status = await usersDao.addFollow(viewer, critic)
+    res.json(status)
+}
+
+const removeFollow = async (req, res) => {
+    const { viewer, critic } = req.params
+    console.log("Critic is " + critic)
+    const status = await usersDao.unFollow(viewer, critic)
+    res.json(status)
+}
+
+
+const saveMovie = async (req, res) => {
+    const { username, movie_id } = req.params
+    const status = usersDao.saveMovie(username, movie_id)
+    res.json(status)
+}
+
+const unsaveMovie = async (req, res) => {
+    const { username, movie_id } = req.params
+    const status = usersDao.unsaveMovie(username, movie_id)
+    res.json(status)
 }
 
 const updateUser = async (req, res) => {
-    const id = req.params.id;
-    const status = await usersDao.updateUser(id, req.body);
-    const user = await usersDao.findUserById(id);
+    console.log("update user with " + JSON.stringify(req.body))
+    const username = req.params.username;
+    const user = await usersDao.updateUser(username, req.body);
     req.session["currentUser"] = user;
-    res.json(status);
+    res.json(user);
 };
 
 const deleteUser = async (req, res) => {
-    const id = req.params.id;
+    const id = req.params.username;
     const status = await usersDao.deleteUser(id);
     res.json(status);
 };
@@ -50,21 +96,24 @@ const findAllUsers = async (req, res) => {
     }
 };
 
-const findUserByIdOrUsername = async (req, res) => {
-    const idOrUsername = req.params.idOrUsername;
-    let user;
-
-    if(isNaN(idOrUsername)) {
-        user = await usersDao.findUserByUsername(idOrUsername);
-    } else {
-        user = await usersDao.findUserById(idOrUsername);
-    }
-
+const findUser = async (req, res) => {
+    const username = req.params.username;
+    let user = await usersDao.findUserByUsername(username)
     if (user) {
         res.json(user);
     } else {
         res.sendStatus(404);
     }
 };
+
+// const getFavoritingUsers = async (req, res) => {
+//     const movie = req.params.movieid;
+//     let users = await usersDao.favoritingUsers(username)
+//     if (users) {
+//         res.json(users);
+//     } else {
+//         res.sendStatus(404);
+//     }
+// };
 
 export default UserController

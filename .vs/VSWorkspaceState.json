@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\controllers",
+    "\\controllers\\movies",
+    "\\controllers\\reports",
+    "\\controllers\\reviews",
+    "\\controllers\\search",
+    "\\controllers\\users"
+  ],
+  "SelectedNode": "\\controllers\\reviews\\reviews-dao.js",
+  "PreviewInSolutionExplorer": false
+}
