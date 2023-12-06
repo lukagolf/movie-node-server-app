@@ -4,15 +4,15 @@
 - **File**: `path/to/movie-node-server-app/db/nodejs-connect/mysql-connect.js`
 - **Action**: Replace the `user` and `password` fields with your own MySQL username and password.
 
-### Step 3: Start MySQL Server
+### Step 2: Start MySQL Server
 - **Action**: Start your MySQL server.
 - **Tool**: Open MySQL Workbench.
 
-### Step 4: Execute SQL Dump
+### Step 3: Execute SQL Dump
 - **File**: `path/to/movie-node-server-app/db/projectdump.sql`
 - **Action**: Open and execute this file in your MySQL Workbench.
 
-### Step 5: Alter MySQL User Settings
+### Step 4: Alter MySQL User Settings
 - **Action**: Open a new query tab in MySQL Workbench.
 - **Commands**:
   ```
