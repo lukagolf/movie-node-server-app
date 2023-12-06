@@ -16,7 +16,7 @@ const app = express();
 const MySQLStore = MySQLSession(session);
 
 const options = {
-    host: 'localhost',
+    host: 'host.docker.internal',
     port: 3306,
     user: 'root',
     password: 'root',
