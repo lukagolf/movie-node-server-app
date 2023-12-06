@@ -42,7 +42,7 @@ export const createUser = async ({
 }
 
 // will need to pass like 7 params instead, destructuring syntax
-export const updateUser = (u_name, {
+export const updateUser = async (u_name, {
     username,
     pword,
     email,
@@ -50,18 +50,26 @@ export const updateUser = (u_name, {
     lastname,
     roles
 }) => {
-    const role1 = roles[0]
+    let role1 = roles[0]
     const role2 = roles[1]
-    callProcedure('update_user', [
-        u_name,
-        username,
-        pword,
-        email,
-        role1,
-        role2,
-        firstname,
-        lastname
-    ])
+    if (!role1) {
+        role1 = role2
+        role2 = null
+    }
+    try {
+        let user = await callProcedure('update_user', [
+            u_name,
+            username,
+            pword,
+            email,
+            role1,
+            role2,
+            firstname,
+            lastname
+        ])
+    } catch (error) {
+        return -1
+    }
     return findUserByUsername(username);
 };
 
