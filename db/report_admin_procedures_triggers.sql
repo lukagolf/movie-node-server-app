@@ -1,3 +1,8 @@
+/*
+ * This file provides all of the database's functionality for ensuring that 
+ * all reports get randomly assigned to site admins.
+ */
+
 USE moviesite;
 
 DROP FUNCTION IF EXISTS get_random_admin;

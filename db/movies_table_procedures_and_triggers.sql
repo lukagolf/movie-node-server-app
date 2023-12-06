@@ -25,7 +25,8 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS update_movie;
 DELIMITER //
 -- Procedure: update_movie
--- Description: Updates details of an existing movie in the `movies` table.
+-- Description: Updates details of an existing movie in the `movies` table,
+-- then returns the updated movie.
 -- Parameters:
 --   movie_id_p (INT): The ID of the movie to update.
 --   new_release (DATETIME): updated date of movie to update
@@ -41,8 +42,9 @@ BEGIN
   UPDATE movies SET title = new_title, 
 					release_date = new_release,
                     summary = new_summary,
-                    new_photo_url = new_photo_url
+                    photo_url = new_photo_url
   WHERE movie_id = movie_id_p;
+  SELECT * FROM movies WHERE movie_id = movie_id_p;
 END //
 DELIMITER ;
 
@@ -96,10 +98,3 @@ SELECT * FROM movies
 	WHERE movie_id = id_p;
 END //
 DELIMITER ;
-
--- DROP PROCEDURE IF EXISTS get_favorite_movies;
--- DELIMITER //
--- Procedure: get_favorited_movie
--- Description: get a list of a user's favorite movies 
--- Parameters:
---   username (VARCHAR): ID of desired movie

@@ -4,7 +4,7 @@ const UserController = (app) => {
     app.get('/api/users', findAllUsers);
     app.get('/api/users/:username', findUser);
     // app.get('/api/users/favorites/:movieid', getFavoritingUsers)
-    app.post('/api/users/register', createUser);
+    // app.post('/api/users/register', createUser);
     app.put('/api/users/save/:username/:movie_id', saveMovie);
     app.put('/api/users/unsave/:username/:movie_id', unsaveMovie);
     app.put('/api/users/:username', updateUser);

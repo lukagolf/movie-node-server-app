@@ -2,14 +2,14 @@ import * as usersDao from "./users-dao.js";
 
 const AuthController = (app) => {
     const register = async (req, res) => {
-        console.log(req.body);
-        try {
-            await usersDao.createUser(req.body);
-            const newUser = await usersDao.findUserByUsername(req.body.username)
-            req.session["currentUser"] = newUser;
-            res.json(newUser);
-        } catch (error) {
+        const newUser = await usersDao.createUser(req.body);
+        console.log("newUser is" + newUser)
+        if (newUser == -1) {
+            console.log("GOT -1")
             res.sendStatus(403)
+        } else {
+            req.session["currentUser"] = newUser;
+            res.json(newUser)
         }
     };
 

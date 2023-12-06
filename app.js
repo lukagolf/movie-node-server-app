@@ -4,6 +4,7 @@ import UserController from "./controllers/users/users-controller.js";
 import ReviewsController from "./controllers/reviews/reviews-controller.js";
 import ReportsController from "./controllers/reports/reports-controller.js";
 import MoviesController from "./controllers/movies/movies-controller.js";
+import GenresController from './controllers/genres/genres-controller.js';
 import session from "express-session";
 import AuthController from "./controllers/users/auth-controller.js";
 import { config as dotenvConfig } from 'dotenv';
@@ -55,5 +56,6 @@ ReviewsController(app);
 UserController(app)
 AuthController(app);
 ReportsController(app);
+GenresController(app);
 MoviesController(app);
 app.listen(process.env.PORT || 4000);

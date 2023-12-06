@@ -18,8 +18,21 @@ export const getMoviesByTitle = async (title) => {
 }
 
 // need to iron out logic
-export const updateMovie = (id, { title, release, summary, photo }) =>
-        callProcedure('update_movie', [id, title, release, summary, photo])
+export const updateMovie = async (id, { title, release, summary, photo, genres }) => {
+    console.log("Update movie got " + summary + " " + release + " " + photo)
+    try {
+        let movie = await callProcedure('update_movie', [id, title, release, summary, photo])
+        callProcedure('remove_movie_genres', [id])
+        for (const genre of genres) {
+            callProcedure('give_movie_genre', [movie[0].movie_id, genre])
+        }
+        movie = {...movie[0], genres}
+        return movie
+    } catch (error) {
+        console.error(error)
+        return -1
+    }
+}
 
 export const createMovie = async ({ title, release, summary, photo, genres }) => {
     try {
@@ -27,22 +40,33 @@ export const createMovie = async ({ title, release, summary, photo, genres }) =>
         for (const genre of genres) {
             callProcedure('give_movie_genre', [movie[0].movie_id, genre])
         }
+        return movie
     } catch (error) {
+        console.error(error)
         return -1;
     }
 }
 
 export const deleteMovie = (id) => callProcedure('delete_movie', [id])
 
-const getDetailedMovies = (movies) => {
+const getDetailedMovies = async (movies) => {
     const promises = movies.map((movie) => addMovieDetails(movie, movie.movie_id))
-    return Promise.all(promises)
+    const detailedMovies = await Promise.allSettled(promises)
+    return detailedMovies
+        .filter(promise => promise.status === 'fulfilled')
+        .map(result => result.value)
+
 }
 
 const addMovieDetails = async (movie, id) => {
     let favorites = await fav.getMovieFavorites(id)
     favorites = favorites.map(f => f.username)
-    let genres = await callProcedure('get_movie_genres', [id])
+    let genres
+    try {
+        genres = await callProcedure('get_movie_genres', [id])
+    } catch (error) {
+        console.error(error)
+    }
     genres = genres.map(g => g.genre_name)
     return {...movie, favorites, genres}
 }

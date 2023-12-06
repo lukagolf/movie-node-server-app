@@ -81,28 +81,22 @@ BEGIN
 END $$
 DELIMITER ;
 
-/* Procedure: remove_movie_genre
- * Does:      Revokes specified genre associated with supplied movie.
- * Params: 	  movie_id_p: id of movie with genre
- *			  genre_name_p: name of genre being removed from the movie
- * Signals:   SQLSTATE 45000 if movie_id is invalid or genre was not 
- *			  associated with that movie. 
+/* Procedure: remove_movie_genres
+ * Does:      Revokes genres associated with a movie
+ * Signals:   SQLSTATE 45000 if movie_id is invalid
  */
-DROP PROCEDURE IF EXISTS remove_movie_genre;
+DROP PROCEDURE IF EXISTS remove_movie_genres;
 DELIMITER $$
-CREATE PROCEDURE remove_movie_genre(movie_id_p INT, genre_name_p VARCHAR(50))
+CREATE PROCEDURE remove_movie_genres(movie_id_p INT)
 BEGIN
 	IF NOT EXISTS (SELECT movie_id FROM movies WHERE movie_id = movie_id_p) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Movie not found';
-	ELSEIF NOT EXISTS (SELECT * FROM movie_has_genre 
-						WHERE movie_id = movie_id_p AND genre_name = genre_name_p) THEN
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Genre not linked to movie';
     END IF;
-    DELETE FROM movie_has_genre WHERE movie_id = movie_id_p AND genre_name = genre_name_p;
+    DELETE FROM movie_has_genre WHERE movie_id = movie_id_p;
 END $$
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS get_movie_genres
+DROP PROCEDURE IF EXISTS get_movie_genres;
 DELIMITER $$
 /* Proecdure: get_movie_genres
  * Does: 	  returns list of genres for supplied movie
@@ -115,5 +109,16 @@ IF NOT EXISTS (SELECT movie_id FROM movies WHERE movie_id = mid) THEN
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Movie not found';
 END IF;
 SELECT genre_name FROM movie_has_genre WHERE movie_id = mid;
+END $$
+
+DELIMITER ;
+/* Proecdure: get_all_genres
+ * Does: 	  returns list of all genres in DB
+ */
+DROP PROCEDURE IF EXISTS get_all_genres;
+DELIMITER $$
+CREATE PROCEDURE get_all_genres()
+BEGIN
+SELECT * FROM genres;
 END $$
 DELIMITER ;

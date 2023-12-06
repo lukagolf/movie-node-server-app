@@ -11,12 +11,10 @@ CREATE TABLE movies (
     UNIQUE (title, release_date)
 );
 
-DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
 	genre_name VARCHAR(50) PRIMARY KEY
 );
 
-DROP TABLE IF EXISTS movie_has_genre;
 CREATE TABLE movie_has_genre (
 	movie_id INT,
     genre_name VARCHAR(50),
@@ -64,12 +62,6 @@ CREATE TABLE user_favorites_movie (
 					      ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS user_likes_review;
-DROP TABLE IF EXISTS user_dislikes_review;
-DROP TABLE IF EXISTS reports;
-DROP TABLE IF EXISTS reviews;
-
-
 CREATE TABLE reviews (
 	rev_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -78,7 +70,6 @@ CREATE TABLE reviews (
     date_reviewed DATETIME NOT NULL,
     rating INT NOT NULL,
     critic_id VARCHAR(64) NOT NULL,
-    -- UNIQUE(movie_id, critic_id),
     CONSTRAINT FOREIGN KEY reviewed_movie_fk (movie_id) REFERENCES
 		movies (movie_id) ON UPDATE RESTRICT
 					      ON DELETE CASCADE,

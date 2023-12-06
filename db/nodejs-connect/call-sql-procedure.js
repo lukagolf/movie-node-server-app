@@ -15,7 +15,7 @@ import connection from './mysql-connect.js'
  *          The data will be an array of objects returned by MySQL, even if
  *          MySQL only returned 1 object.
  */
-const callProcedure = (procedure_name, args) => {
+const callProcedure = (procedure_name, args=[]) => {
     return new Promise((resolve, reject) => {
         let sqlStr = `CALL ${procedure_name} (`
         let numArgs = args.length
