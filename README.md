@@ -10,7 +10,7 @@
 - **Tool**: Open MySQL Workbench.
 
 ### Step 3: Execute SQL Dump
-- **File**: `path/to/movie-node-server-app/db/projectdump.sql`
+- **File**: `projectdump.sql`
 - **Action**: Open and execute this file in your MySQL Workbench.
 
 ### Step 4: Alter MySQL User Settings
