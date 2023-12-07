@@ -2,6 +2,7 @@
 
 ### Step 1: Update Database Credentials
 - **File**: `path/to/movie-node-server-app/db/nodejs-connect/mysql-connect.js`
+- **File**: `path/to/movie-node-server-app/app.js`
 - **Action**: Replace the `user` and `password` fields with your own MySQL username and password.
 
 ### Step 2: Start MySQL Server
